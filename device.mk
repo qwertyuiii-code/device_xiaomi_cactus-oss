@@ -1,3 +1,33 @@
+DEVICE_PATH := device/xiaomi/certus
+
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_o_mr1.mk)
+
+# IMS
+PRODUCT_PACKAGES += \
+    mtk-ims-telephony
+
+# Screen density
+PRODUCT_AAPT_CONFIG := normal
+PRODUCT_AAPT_PREF_CONFIG := xhdpi
+
+# Boot animation
+TARGET_SCREEN_HEIGHT := 1440
+TARGET_SCREEN_WIDTH := 720
+
+# GMS
+PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
+
+# VNDK
+PRODUCT_TARGET_VNDK_VERSION := 28
+PRODUCT_EXTRA_VNDK_VERSIONS := 28
+
+# APNs
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/apns-conf.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/apns-conf.xml
+
+
 # Audio
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/audio/a2dp_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_audio_policy_configuration.xml \
@@ -23,6 +53,19 @@ PRODUCT_COPY_FILES += \
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay
+DEVICE_PACKAGE_OVERLAYS += \
+	$(LOCAL_PATH)/overlay-lineage
+
+# Init
+PRODUCT_PACKAGES += \
+    fstab.enableswap \
+    init.target.rc \
+    ueventd.rc
+
+# Input
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/keylayout/ACCDET.kl:$(TARGET_COPY_OUT_SYSTEM)/usr/keylayout/ACCDET.kl \
+    $(LOCAL_PATH)/keylayout/mtk-kpd.kl:$(TARGET_COPY_OUT_SYSTEM)/usr/keylayout/mtk-kpd.kl
 
 # Permissions
 PRODUCT_COPY_FILES += \
@@ -84,6 +127,53 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \
     $(LOCAL_PATH)/configs/wifi/wpa_supplicant.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant.conf \
     $(LOCAL_PATH)/configs/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
+
+# Bluetooth
+PRODUCT_PACKAGES += \
+    audio.a2dp.default
+
+# Camera
+PRODUCT_PACKAGES += \
+    GcamGo
+
+# HIDL
+PRODUCT_PACKAGES += \
+    libhwbinder \
+    libhidltransport
+
+# RCS
+PRODUCT_PACKAGES += \
+    com.android.ims.rcsmanager \
+    PresencePolling \
+    RcsService
+
+# RROs
+PRODUCT_PACKAGES += \
+    RoundedCornerFW \
+    RoundedCornerSysUI \
+    BatteryHealthOverlay \
+    FpsInfoOverlay
+
+# Symbols
+PRODUCT_PACKAGES += \
+    libshim_showlogo
+
+# Soong namespaces
+PRODUCT_SOONG_NAMESPACES += \
+    $(LOCAL_PATH)
+
+# Symbols
+PRODUCT_PACKAGES += \
+    libshim_vtservice
+
+# System properties
+-include $(LOCAL_PATH)/product_prop.mk
+
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+
+# ImsInit hack
+PRODUCT_PACKAGES += \
+    ImsInit
 
 # Inherit vendor
 $(call inherit-product, vendor/xiaomi/cactus/cactus-vendor.mk)
